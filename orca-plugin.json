@@ -1,0 +1,85 @@
+{
+	"$schema": "https://raw.githubusercontent.com/stablyai/orca/main/docs/schemas/plugins/orca-plugin.v2.schema.json",
+	"manifestVersion": 2,
+	"id": "cloudflare-access",
+	"name": "Cloudflare Access",
+	"version": "0.1.0",
+	"description": "Relays Orca Remote Server connections through Cloudflare Access, signing in with Managed OAuth.",
+	"author": {
+		"name": "NISHIZAWA Shuntaro"
+	},
+	"license": "MIT",
+	"repository": "https://github.com/shun-shobon/orca-cloudflare-access",
+	"engines": {
+		"orca": ">=1.4.248"
+	},
+	"execution": "trusted-worker",
+	"pluginApi": 1,
+	"main": "src/main.ts",
+	"contributes": {
+		"commands": [
+			{
+				"id": "signIn",
+				"title": "Cloudflare Access: Sign in"
+			},
+			{
+				"id": "signOut",
+				"title": "Cloudflare Access: Sign out"
+			},
+			{
+				"id": "showStatus",
+				"title": "Cloudflare Access: Show status"
+			},
+			{
+				"id": "statusBarAction",
+				"title": "Cloudflare Access: Sign in or show status"
+			}
+		],
+		"statusBarItems": [
+			{
+				"id": "status",
+				"text": "Cloudflare Access",
+				"icon": "cloud",
+				"command": "statusBarAction"
+			}
+		],
+		"settings": [
+			{
+				"key": "upstreamUrl",
+				"title": "Upstream URL",
+				"description": "Origin of the Orca server published behind Cloudflare Access.",
+				"type": "string",
+				"placeholder": "https://orca.example.com"
+			},
+			{
+				"key": "localPort",
+				"title": "Local proxy port",
+				"description": "Port the proxy listens on at 127.0.0.1. Match the port in the server's --pairing-address.",
+				"type": "integer",
+				"default": 16768,
+				"minimum": 1,
+				"maximum": 65535
+			},
+			{
+				"key": "callbackPort",
+				"title": "OAuth callback port",
+				"description": "Port that receives the sign-in redirect at http://127.0.0.1:<port>/callback.",
+				"type": "integer",
+				"default": 16769,
+				"minimum": 1,
+				"maximum": 65535
+			}
+		]
+	},
+	"capabilities": [
+		{
+			"kind": "settings:own"
+		},
+		{
+			"kind": "secrets:own"
+		},
+		{
+			"kind": "notifications:show"
+		}
+	]
+}
