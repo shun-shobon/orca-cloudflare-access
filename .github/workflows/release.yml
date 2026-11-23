@@ -1,0 +1,67 @@
+# This workflow is managed by gh actions-lock.
+
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Version to bump
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: easy-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Setup | Development environment
+        uses: $/.github/actions/setup
+
+      - name: Run | Create Release Pull Request
+        uses: shun-shobon/easy-release@v0.3.0
+        with:
+          mode: prepare
+          release-type: ${{ inputs.release_type }}
+
+  # Orca はリリースのタグから直接インストールするので、添付する成果物がなく draft を挟まない
+  publish:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Setup | Checkout Merged Commit
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Run | Publish Release
+        uses: shun-shobon/easy-release@v0.3.0
+        with:
+          mode: publish

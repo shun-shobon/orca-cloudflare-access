@@ -1,0 +1,124 @@
+# This workflow is managed by gh actions-lock.
+
+name: ci
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  ORCA_VERSION: "1.4.272"
+
+jobs:
+  format:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup | Development environment
+        uses: $/.github/actions/setup
+
+      - name: Run | Format
+        run: pnpm run format:check
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup | Development environment
+        uses: $/.github/actions/setup
+
+      - name: Setup | Orca CLI
+        uses: $/.github/actions/setup-orca
+        with:
+          version: ${{ env.ORCA_VERSION }}
+
+      - name: Setup | Orca typings
+        run: orca plugin types .
+
+      - name: Run | Lint
+        run: pnpm run lint --deny-warnings
+
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup | Development environment
+        uses: $/.github/actions/setup
+
+      - name: Setup | Orca CLI
+        uses: $/.github/actions/setup-orca
+        with:
+          version: ${{ env.ORCA_VERSION }}
+
+      - name: Run | Typecheck
+        run: pnpm run typecheck
+
+  knip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup | Development environment
+        uses: $/.github/actions/setup
+
+      - name: Run | Knip
+        run: pnpm run knip
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup | Development environment
+        uses: $/.github/actions/setup
+
+      - name: Setup | Orca CLI
+        uses: $/.github/actions/setup-orca
+        with:
+          version: ${{ env.ORCA_VERSION }}
+
+      - name: Run | Test
+        run: pnpm run test
+
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup | Orca CLI
+        uses: $/.github/actions/setup-orca
+        with:
+          version: ${{ env.ORCA_VERSION }}
+
+      - name: Run | Validate plugin
+        run: orca plugin validate .
+
+  status-check:
+    needs: [format, lint, typecheck, knip, test, validate]
+    if: ${{ always() }}
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - name: Verify | All CI jobs succeeded
+        env:
+          RESULTS: ${{ toJSON(needs.*.result) }}
+        run: jq -e 'all(.[]; . == "success")' <<< "$RESULTS"

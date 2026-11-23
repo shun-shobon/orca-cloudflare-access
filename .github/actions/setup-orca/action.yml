@@ -1,0 +1,43 @@
+name: "Setup Orca CLI"
+description: "Install the orca CLI from the Orca desktop package for Linux x64"
+
+inputs:
+  version:
+    description: "Orca version to install, without the leading v"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # サーバー版の配布物にはプラグインの型定義と orca/testing が入っていないため、デスクトップ版の deb を使う
+    - name: Setup | Cache Orca package
+      id: cache
+      uses: actions/cache@v6.1.0
+      with:
+        path: ${{ runner.temp }}/orca-package
+        key: orca-deb-amd64-${{ inputs.version }}
+
+    - name: Setup | Download Orca package
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        ORCA_VERSION: ${{ inputs.version }}
+        PACKAGE_DIR: ${{ runner.temp }}/orca-package
+      run: gh release download "v${ORCA_VERSION}" --repo stablyai/orca --pattern "orca-ide_${ORCA_VERSION}_amd64.deb" --dir "$PACKAGE_DIR"
+
+    - name: Setup | Extract Orca
+      shell: bash
+      env:
+        ORCA_VERSION: ${{ inputs.version }}
+        PACKAGE_DIR: ${{ runner.temp }}/orca-package
+        ORCA_DIR: ${{ runner.temp }}/orca
+      run: |
+        dpkg-deb -x "$PACKAGE_DIR/orca-ide_${ORCA_VERSION}_amd64.deb" "$ORCA_DIR"
+        mkdir -p "$ORCA_DIR/bin"
+        ln -s "$ORCA_DIR/opt/Orca/resources/bin/orca-ide" "$ORCA_DIR/bin/orca"
+        echo "$ORCA_DIR/bin" >> "$GITHUB_PATH"
+
+    - name: Verify | Orca CLI
+      shell: bash
+      run: orca --version

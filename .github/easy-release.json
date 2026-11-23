@@ -1,0 +1,4 @@
+{
+	"packageFiles": ["package.json", "orca-plugin.json"],
+	"updateCommand": "pnpm format"
+}
