@@ -12,7 +12,13 @@
 | `pnpm validate`                     | Orca と同じ規則でマニフェストを検証する                                              |
 | `orca plugin dev watch .`           | Orca に開発フォルダーとして読み込み、ログを流す                                      |
 
-`orca` CLI（Orca デスクトップに同梱）が PATH にあることを前提にしている。
+`orca` CLI（Orca デスクトップに同梱）が PATH にあることを前提にしている。型情報を使う lint も `.orca/types` を読むので、clone 直後は `orca plugin types .` で生成しておく。
+
+## CI とリリース
+
+- CI は Orca の Linux 用 deb を展開して `orca` CLI を用意する（`.github/actions/setup-orca`）。版は `.github/workflows/ci.yml` の `ORCA_VERSION` で固定している。新しい Orca にしかない API を使うときは、`orca-plugin.json` の `engines.orca` とあわせて上げる。
+- `uses:` を追加・変更したら `gh-actions-lock` で `.github/workflows/actions.lock` を更新し、`gh-actions-lock --no-fix` で検証する。
+- リリースは Actions の release ワークフローを手動実行して patch / minor / major を選ぶ。作られた準備 PR をマージすると、`package.json` と `orca-plugin.json` の `version` を揃えたタグとリリースが公開される。`orca plugin install` は最新の `vX.Y.Z` タグを入れるので、成果物の添付はない。
 
 ## 構成
 
