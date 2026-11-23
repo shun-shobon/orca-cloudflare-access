@@ -1,0 +1,33 @@
+{
+	"name": "orca-cloudflare-access",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Orca plugin that relays Orca Remote Server connections through Cloudflare Access.",
+	"license": "MIT",
+	"author": "NISHIZAWA Shuntaro <me@s2n.tech>",
+	"type": "module",
+	"scripts": {
+		"format": "oxfmt",
+		"format:check": "oxfmt --check",
+		"knip": "knip",
+		"lint": "oxlint",
+		"lint:fix": "oxlint --fix",
+		"test": "orca plugin test .",
+		"typecheck": "orca plugin types . > /dev/null && tsc --noEmit",
+		"validate": "orca plugin validate ."
+	},
+	"devDependencies": {
+		"@shun-shobon/oxfmt-config": "7.1.2",
+		"@shun-shobon/oxlint-config": "7.1.2",
+		"@tsconfig/node24": "24.0.6",
+		"@tsconfig/strictest": "2.0.9",
+		"@types/node": "24.19.2",
+		"knip": "6.47.0",
+		"oxfmt": "0.79.0",
+		"oxlint": "1.94.0",
+		"oxlint-tsgolint": "7.0.2007",
+		"typescript": "7.0.2",
+		"vitest": "5.1.1"
+	},
+	"packageManager": "pnpm@12.22.0"
+}

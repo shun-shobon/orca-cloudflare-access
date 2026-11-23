@@ -1,0 +1,21 @@
+{
+	"extends": ["@tsconfig/node24/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
+	"compilerOptions": {
+		"module": "preserve",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"exactOptionalPropertyTypes": false,
+		"verbatimModuleSyntax": true,
+		"typeRoots": ["./node_modules/@types", "./.orca/types"],
+		"types": [
+			"node",
+			"orca",
+			"orca-host",
+			"orca-worker",
+			"orca-services",
+			"orca-testing",
+			"orca-frame"
+		]
+	},
+	"include": ["src", "*.config.ts"]
+}

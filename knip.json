@@ -1,0 +1,6 @@
+{
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"ignoreDependencies": ["orca"],
+	"ignoreBinaries": ["orca"],
+	"ignoreUnresolved": ["orca-host", "orca-worker", "orca-services", "orca-testing", "orca-frame"]
+}
