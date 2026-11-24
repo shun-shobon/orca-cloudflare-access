@@ -1,4 +1,17 @@
 {
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["local>shun-shobon/renovate-config"]
+	"extends": ["local>shun-shobon/renovate-config"],
+	"packageRules": [
+		{
+			"description": "プラグインは Orca に同梱の Node.js 24 で動くため、Node.js の型をその版より先に上げない",
+			"matchPackageNames": ["@types/node"],
+			"allowedVersions": "<25"
+		},
+		{
+			"description": "同じ理由で、@tsconfig/node24 を新しい Node.js 向けの tsconfig に置き換えない",
+			"matchPackageNames": ["@tsconfig/node24"],
+			"matchUpdateTypes": ["replacement"],
+			"enabled": false
+		}
+	]
 }
