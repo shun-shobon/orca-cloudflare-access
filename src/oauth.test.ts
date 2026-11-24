@@ -45,13 +45,23 @@ describe("discoverAuthorizationServer", () => {
 		expect(server).toEqual(SERVER);
 	});
 
-	it("トークンなしで 401 にならなければ Managed OAuth が無効とみなす", async () => {
+	it("ログイン画面へのリダイレクトなら Managed OAuth を有効にするよう案内する", async () => {
 		const fetch = fakeFetch({
 			"https://orca.example.com/": () => new Response(null, { status: 302 }),
 		});
 
 		await expect(discoverAuthorizationServer({ resource: RESOURCE, fetch })).rejects.toThrow(
-			"got 302",
+			"Turn on Managed OAuth",
+		);
+	});
+
+	it("401 でもリダイレクトでもなければ受け取ったステータスを示して失敗する", async () => {
+		const fetch = fakeFetch({
+			"https://orca.example.com/": () => new Response(null, { status: 200 }),
+		});
+
+		await expect(discoverAuthorizationServer({ resource: RESOURCE, fetch })).rejects.toThrow(
+			"got 200",
 		);
 	});
 

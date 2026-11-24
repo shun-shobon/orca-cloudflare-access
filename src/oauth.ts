@@ -52,9 +52,14 @@ export async function discoverAuthorizationServer({
 }): Promise<AuthorizationServer> {
 	const challenge = await send(fetch, resource, { redirect: "manual" });
 	await challenge.body?.cancel();
+	if (challenge.status >= 300 && challenge.status < 400) {
+		throw new OAuthError(
+			`${resource.origin} redirected to the Access login page (${challenge.status}) instead of answering 401. Turn on Managed OAuth for this Access application.`,
+		);
+	}
 	if (challenge.status !== 401) {
 		throw new OAuthError(
-			`Expected 401 from ${resource.origin} without a token, got ${challenge.status}. Check that Managed OAuth is on.`,
+			`Expected 401 from ${resource.origin} without a token, got ${challenge.status}.`,
 		);
 	}
 

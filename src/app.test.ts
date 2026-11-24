@@ -79,6 +79,21 @@ describe("App", () => {
 		await expect(app.signIn()).rejects.toThrow("No browser.");
 	});
 
+	it("ログインを始められなければ理由を通知する", async () => {
+		const { app, notifications } = await setup(apps, {
+			fetch: async () => new Response(null, { status: 302 }),
+		});
+
+		await expect(app.signIn()).rejects.toThrow("Turn on Managed OAuth");
+
+		expect(notifications).toEqual([
+			{
+				title: "Cloudflare Access sign-in failed",
+				body: expect.stringContaining("Turn on Managed OAuth"),
+			},
+		]);
+	});
+
 	it("プロキシのポートが使用中ならエラーを表示する", async () => {
 		const blocker = createServer();
 		blocker.listen(0, "127.0.0.1");
@@ -111,6 +126,7 @@ async function setup(
 	const statusBar: StatusBarView[] = [];
 	const secrets = new Map<string, string>();
 	const opened: URL[] = [];
+	const notifications: { title: string; body: string }[] = [];
 	const settings = overrides.settings ?? {
 		upstreamUrl: UPSTREAM,
 		localPort: await freePort(),
@@ -130,7 +146,9 @@ async function setup(
 		updateStatusBar: async (view) => {
 			statusBar.push(view);
 		},
-		notify: async () => undefined,
+		notify: async (title, body) => {
+			notifications.push({ title, body });
+		},
 		log: () => undefined,
 		fetch:
 			overrides.fetch ??
@@ -153,7 +171,7 @@ async function setup(
 	apps.push(app);
 	await app.reload();
 
-	return { app, statusBar, secrets, opened };
+	return { app, statusBar, secrets, opened, notifications };
 }
 
 function fakeCloudflare() {

@@ -87,8 +87,8 @@ export class App {
 		});
 	}
 
+	/** 失敗は通知でも知らせる。ステータスバーから実行したとき、Orca は例外の理由を表示しないため */
 	async signIn(): Promise<string> {
-		const session = this.#requireSession();
 		await this.#cancelSignIn();
 
 		const controller = new AbortController();
@@ -97,12 +97,13 @@ export class App {
 		this.#signIn = { controller, done };
 
 		try {
-			const { completion } = await this.#beginSignIn(session, signal);
+			const { completion } = await this.#beginSignIn(this.#requireSession(), signal);
 			completion.then(finish, (error: unknown) => {
 				this.#reportSignInFailure(error, controller.signal);
 				finish();
 			});
 		} catch (error) {
+			this.#reportSignInFailure(error, controller.signal);
 			finish();
 			throw error;
 		}
