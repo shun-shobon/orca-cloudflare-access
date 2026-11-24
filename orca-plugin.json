@@ -3,7 +3,7 @@
 	"manifestVersion": 2,
 	"id": "cloudflare-access",
 	"name": "Cloudflare Access",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Relays Orca Remote Server connections through Cloudflare Access, signing in with Managed OAuth.",
 	"author": {
 		"name": "NISHIZAWA Shuntaro"
