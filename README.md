@@ -55,7 +55,7 @@ Add `orca.example.com` to Access as a self-hosted application and configure it a
 1. Run `orca plugin install shun-shobon/orca-cloudflare-access`, review the access it asks for, and install it with the `--approve` command it prints.
 2. In the plugin settings, set Upstream URL to `https://orca.example.com`.
 3. Click "Access: signed out" in the status bar and sign in to your IdP in the browser that opens. Setup is done when the item shows "Access: ready".
-4. Go to Settings → Remote Orca Servers → Add Server, paste the server's pairing link, and check "I reach this address through an SSH tunnel". Despite the wording, this option accepts any manual tunnel to a loopback address.
+4. Go to Settings → Remote Orca Servers → Add Server and paste the server's pairing link. Orca warns "This link points back to this device"; check "I reach this address through an SSH tunnel" below the warning to register it. Despite the wording, this option accepts any manual tunnel to `127.0.0.1`.
 
 ### Settings
 

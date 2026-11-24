@@ -55,7 +55,7 @@ Access には `orca.example.com` を Self-hosted アプリとして登録し、�
 1. `orca plugin install shun-shobon/orca-cloudflare-access` を実行し、付与される権限を確かめてから、表示された `--approve` 付きのコマンドで承認してインストールする。
 2. プラグインの設定で Upstream URL に `https://orca.example.com` を入れる。
 3. ステータスバーの「Access: signed out」を押し、開いたブラウザーで IdP にログインする。表示が「Access: ready」になれば完了。
-4. Settings → Remote Orca Servers → Add Server にサーバーのペアリングリンクを貼り、「I reach this address through an SSH tunnel」を入れて登録する。SSH という文言だが、loopback 宛ての手動トンネル全般を受け付ける入口である。
+4. Orca の設定でリモートサーバーの追加を開き、サーバーのペアリングリンクを貼る。「このリンクはこのデバイス自身を指しています」という警告が出るので、その下の「このアドレスには SSH トンネル経由で接続する」をオンにして登録する。SSH という文言だが、`127.0.0.1` 宛ての手動トンネル全般を受け付ける入口である。
 
 ### 設定項目
 
